@@ -12,11 +12,19 @@
 
 class User < ActiveRecord::Base
 
+  after_initialize :ensure_session_token
+
   validates :email, :password_digest, :session_token, presence: true
 
   validates :email, :session_token, uniqueness: true
 
   validates :password, length: {minimum: 6, message: "Password can't be blank"}
+
+  def self.find_by_crendentials(email, password)
+    user = User.find_by_email(email)
+
+    user && user.is_password?(password) ? user : nil
+  end
 
   #1. hash password, save it to db as password_digest
   def password=(password)
@@ -33,11 +41,15 @@ class User < ActiveRecord::Base
   end
 
   def reset_session_token!
-
+    self.session_token = self.class.generate_session_token
     self.save!
+    self.session_token
   end
 
-  def ensure_session_token
+  private
 
+  def ensure_session_token # make sure user's s_t is there or generate a new one if it's the first time they've logged in
+    self.session_token ||= self.class.generate_session_token
   end
+
 end
