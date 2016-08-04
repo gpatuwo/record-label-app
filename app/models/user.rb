@@ -18,22 +18,26 @@ class User < ActiveRecord::Base
 
   validates :email, :session_token, uniqueness: true
 
-  validates :password, length: {minimum: 6, message: "Password can't be blank"}
+  validates :password_digest, presence: {message: "Password can't be blank"} #customize error message bc user won't know what password_digest is
+  validates :password, length: {minimum: 6, allow_nil: true} #allow_nil => validation won't run if pw is blank...?
+
+  attr_reader :password
 
   def self.find_by_crendentials(email, password)
     user = User.find_by_email(email)
-
     user && user.is_password?(password) ? user : nil
   end
 
-  #1. hash password, save it to db as password_digest
+  #1. hash password
   def password=(password)
-    self.password_digest = BCrypt::Password.create(password)
+    # need way to validate password, so create ivar and it won't get persisted to db
+    @password = password
+    self.password_digest = BCrypt::Password.create(password) # .create creates a Password object by hashing the input
   end
 
   #2. check for pw equality using bcrypt method .is_password
   def is_password?(password)
-    BCrypt::Password.new(self.password_digest).is_password?(password) #.new won't save to db
+    BCrypt::Password.new(self.password_digest).is_password?(password) #.new builds a Password obj from an existing, string hash
   end
 
   def self.generate_session_token
