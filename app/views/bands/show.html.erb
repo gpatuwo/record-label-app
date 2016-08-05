@@ -1,1 +1,7 @@
 <h3><%= @band.name %>'s Discography </h3>
+
+<ul>
+  <% @band.albums.each do |album| %>
+    <li> <%= link_to album.title, album_url(album.id)%> </li>
+  <% end %>
+</ul>

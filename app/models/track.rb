@@ -14,9 +14,9 @@
 
 class Track < ActiveRecord::Base
   belongs_to :album
-  belongs_to :band, through: :album, source: :band
+  has_one :band, through: :album, source: :band
 
   validates :album, :title, :ord, presence: true
-  validates :ord, uniqueness: {scope: album_id}
+  validates :ord, uniqueness: {scope: :album_id}
   validates :bonus, inclusion: {in: [true, false]}
 end

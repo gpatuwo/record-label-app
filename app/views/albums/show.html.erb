@@ -1,0 +1,11 @@
+<h3><%= @album.band.name %> --  <%= @album.title %>, <%= @album.year %></h3>
+<p>
+  recorded live? <%= @album.live? %>
+</p>
+
+<h4>Tracks:</h4>
+<ol>
+  <%@album.tracks.each do |track| %>
+    <li> <%= link_to track.title, track_url(track.id) %></li>
+  <% end %>
+</ol>
