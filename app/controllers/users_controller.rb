@@ -15,7 +15,7 @@ class UsersController < ApplicationController
     if @user.save
       # log in
       # redirect to some page
-      redirect_to user_url
+      redirect_to user_url(@user.id)
     else
       flash.now[:errors] = @user.errors.full_messages
       render :new
@@ -27,6 +27,7 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :password)
+    # params is everything that comes in from the form and also the url
   end
 
 end
