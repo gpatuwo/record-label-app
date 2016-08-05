@@ -10,9 +10,14 @@ class ApplicationController < ActionController::Base
     @current_user ||= User.find_by_session_token(session[:session_token])
   end
 
+  def logged_in?
+    return false unless current_user
+    session[:session_token] == current_user.session_token
+  end
 
   def login!(user)
     session[:session_token] = user.reset_session_token!
+    # resets here bc user, the ivar, doesn't have a session token and reset is how i've written session_token to be saved into db on user model
   end
 
   def logout!
