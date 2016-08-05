@@ -9,7 +9,7 @@
 #
 
 class Band < ActiveRecord::Base
-  has_many :albums
+  has_many :albums, dependent: :destroy #destroys associated obj if this band is destroyed
 
   validates :name, presence: true, uniqueness: true
 end
